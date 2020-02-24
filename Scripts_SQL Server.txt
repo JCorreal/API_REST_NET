@@ -1,0 +1,87 @@
+CREATE DATABASE ApiRest_DB
+
+CREATE TABLE tbl_usuarios(
+	Usuario_Id int IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	Nombres varchar(50) NOT NULL,
+	Apellidos varchar(50) NOT NULL)
+
+INSERT INTO TBL_USUARIOS (NOMBRES, APELLIDOS) VALUES ('Lebron', 'James')
+INSERT INTO TBL_USUARIOS (NOMBRES, APELLIDOS) VALUES ('Stephen', 'Curry')
+INSERT INTO TBL_USUARIOS (NOMBRES, APELLIDOS) VALUES ('James', 'Harden')
+
+GO
+CREATE PROCEDURE spr_Listados
+@p_Usuario_Id  int
+
+AS
+
+BEGIN	  
+     SET NOCOUNT ON;
+     IF (@p_Usuario_Id <> 0)
+         SELECT * FROM tbl_usuarios WHERE USUARIO_ID = @p_Usuario_Id         
+     ELSE                                      
+	     SELECT * FROM tbl_usuarios       
+END
+
+
+GO
+CREATE PROCEDURE spr_IUUsuarios
+@p_Usuario_Id   int,
+@p_Nombres 		varchar(50),
+@p_Apellidos	varchar(50),
+@p_Resultado    int OUT
+
+AS
+  Declare @v_DatoExiste int
+  SET @v_DatoExiste = 0
+  SET @p_Resultado = 0
+
+  BEGIN TRY
+          
+        IF (@p_Usuario_Id = 0) 
+            INSERT INTO tbl_usuarios(NOMBRES,APELLIDOS) VALUES(@p_Nombres, @p_Apellidos)
+        ELSE
+            BEGIN
+				SET  @v_DatoExiste = (SELECT USUARIO_ID FROM tbl_usuarios WHERE USUARIO_ID = @p_Usuario_Id)
+				IF (@v_DatoExiste <> 0) 
+	                UPDATE tbl_usuarios SET             
+					NOMBRES			 = @p_Nombres,  
+					APELLIDOS        = @p_Apellidos
+					WHERE USUARIO_ID = @p_Usuario_Id   
+				ELSE
+					 SET @p_Resultado = -2
+            END                
+            
+                    
+  END TRY
+  
+BEGIN CATCH   
+      SET @p_Resultado = -1
+      RETURN @p_Resultado
+END CATCH
+
+GO
+CREATE PROCEDURE spr_DUsuario
+@p_Usuario_Id       INT,
+@p_Resultado        INT OUT
+
+AS
+  Declare @v_DatoExiste int
+  SET @v_DatoExiste = 0  
+  SET @p_Resultado = 0
+
+  BEGIN TRY
+            SET  @v_DatoExiste = (SELECT USUARIO_ID FROM tbl_usuarios WHERE USUARIO_ID = @p_Usuario_Id)
+            IF (@v_DatoExiste <> 0) 		
+				DELETE FROM tbl_usuarios
+				WHERE USUARIO_ID = @p_Usuario_Id 
+            ELSE
+                SET  @v_DatoExiste = -2          
+  END TRY
+  
+BEGIN CATCH   
+      SET @p_Resultado = -1
+      RETURN @p_Resultado
+END CATCH
+
+
