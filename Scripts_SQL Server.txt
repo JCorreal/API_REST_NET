@@ -76,7 +76,7 @@ AS
 				DELETE FROM tbl_usuarios
 				WHERE USUARIO_ID = @p_Usuario_Id 
             ELSE
-                SET  @v_DatoExiste = -2          
+                SET  @p_Resultado = -2          
   END TRY
   
 BEGIN CATCH   
