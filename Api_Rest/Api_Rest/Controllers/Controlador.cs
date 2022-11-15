@@ -2,7 +2,7 @@
 using Api_Rest.Models;
 using System.Collections.Generic;
 
-namespace Api_Rest.BLL
+namespace Api_Rest.Controllers
 {
     public class Controlador
     {
